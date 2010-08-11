@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:data="org.juicekit.data.*">
+
+	<!--
+	
+	This example demonstrates a few of <b>juicekit-data</b>'s capabilities.  
+	
+	<ul>
+	<li>ArrayCollectionFromUrl: Parses data in delimited data files and makes the
+	result available as a bindable ArrayCollection</li>
+	<li>LiveQuery: SQL-like resummarization/reformatting of data.</li>
+	<li>Data grid formatting with Formatter</li>
+	<ul>	
+	-->
+	
+	<fx:Declarations>
+
+		<data:ArrayCollectionFromUrl id="data1" url="http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv"/>
+		
+		<data:ArrayCollectionFromUrl id="data2" url="http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv" postprocessRow="postprocessRow"/>
+		
+		<!--
+		Contains a bindable reference to a Query "q". The Flex 4
+		compiler has trouble inlining the Query.
+		-->
+		<data:LiveQuery id="summaryByState" 
+						dataProvider="{data2.result}"
+						query="{q}"/>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			
+			import org.juicekit.query.Query;
+			import org.juicekit.query.methods.*;
+			import org.juicekit.util.helper.Formatter;
+			
+			public var sampleurl:String = "http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv";
+			
+			/**
+			 * Perform postprocessing on each raw row to add
+			 * or change fields.
+			 */
+			public function postprocessRow(o:Object, ...rest):void {
+				// Add a field
+				o['Company'] = 'Juice Inc';
+				
+				// Give the sex field a pretty description
+				var sexLookup:Object = {'M': 'Menfolk', 'F': 'Ladies'}
+				o['SEX'] = sexLookup[o['SEX']];
+			}
+			
+			[Bindable]
+			public var q:Query = select({'STATE': 'STATE',
+				'POP2000':  sum('POP2000'),
+				'POP2008':   sum('POP2008'),
+			    'Pct Change': pctchange('POP2008','POP2000')})
+				.groupby('STATE')
+				.orderby('STATE')
+				
+				
+		]]>
+	</fx:Script>
+
+	<fx:Style source="style.css"/>
+	
+	<s:VGroup paddingLeft="20" paddingTop="20" gap="5">
+		
+		<s:Label text="A. Raw data parsed from URL" styleName="jkHeader"/>
+		<s:Label text="ArrayCollectionFromUrl loads data in delimited data files." styleName="jkNotes"/>
+		<s:Label text="{data1.result.length} rows" styleName="jkNotes"/>
+		<mx:DataGrid dataProvider="{data1.result}" fontFamily="Arial"/>
+		
+		<mx:Spacer height="20"/>
+		<s:Label text="B. Same raw data with postprocessing" styleName="jkHeader"/>
+		<s:Label text="ArrayCollectionFromUrl provides several hooks to reformat data." styleName="jkNotes"/>
+		<s:Label text="{data2.result.length} rows" styleName="jkNotes"/>
+		<mx:DataGrid dataProvider="{data2.result}" fontFamily="Arial"/>
+		
+		<mx:Spacer height="20"/>
+		<s:Label text="C. A LiveQuery that summarizes data in B." styleName="jkHeader"/>
+		<s:Label text="LiveQuery provides a SQL-like syntax to resummarize data." styleName="jkNotes"/>
+		<s:Label text="{summaryByState.result.length} rows" styleName="jkNotes"/>
+		<mx:DataGrid dataProvider="{summaryByState.result}" fontFamily="Arial">
+			<mx:columns>
+				<mx:DataGridColumn dataField="STATE"/>
+				<mx:DataGridColumn dataField="POP2000" textAlign="right" labelFunction="{Formatter.dataGridLabelFunction('#,##0')}"/>
+				<mx:DataGridColumn dataField="POP2008" textAlign="right" labelFunction="{Formatter.dataGridLabelFunction('#,##0')}"/>
+				<mx:DataGridColumn dataField="Pct Change" textAlign="right" labelFunction="{Formatter.dataGridLabelFunction('0.0%')}"/>
+			</mx:columns>
+		</mx:DataGrid>
+	</s:VGroup>
+	
+</s:Application>

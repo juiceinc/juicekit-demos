@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:containers="org.juicekit.containers.*" xmlns:data="org.juicekit.data.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import flash.utils.getTimer;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.SortField;
+			
+			import org.juicekit.util.Filter;
+			import org.juicekit.util.Sort;
+
+			[Bindable]
+			private var elapsedTime:Number = 0;
+			
+			private var arr:Array;
+			
+			[Bindable]
+			private var ac:ArrayCollection = new ArrayCollection();
+
+			/**
+			 * Sort by params
+			 */
+			protected function sortAC(params:Array=null):void
+			{
+				arr = data1.result.source.slice();
+				var s:Sort = new Sort(params);
+				
+				var starttime:Number = getTimer();
+				s.sort(arr, ddl.selectedItem);				
+				elapsedTime = getTimer() - starttime;
+				ac.source = arr;
+			}
+
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Style source="style.css"/>
+	
+	<fx:Declarations>
+		<data:ArrayCollectionFromUrl id="data1" url="http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv"/>
+	</fx:Declarations>
+	
+	<s:VGroup paddingTop="20" paddingLeft="20">
+		<s:Label text="Filtering and sorting" styleName="jkHeader"/>
+		<s:DropDownList id="ddl" dataProvider="{new ArrayCollection(['juicekit','merge','array'])}" selectedIndex="0"/>
+		<s:Label text="This illustrates filtering and sorting convenience methods" styleName="jkBase"/>
+		<s:Button click="sortAC(['-STATE'])" label="['-STATE']" styleName="jkBase"/>
+		<s:Button click="sortAC(['-STATE','AGE'])" label="['-STATE','AGE']" styleName="jkBase"/>
+		<s:Button click="sortAC(['AGE'])" label="['AGE']" styleName="jkBase"/>
+		<s:Button click="sortAC(['-SEX'])" label="['-SEX']" styleName="jkBase"/>
+		<s:Button click="sortAC(['AGE','STATE','POP2008'])" label="['AGE','STATE','POP2008]" styleName="jkBase"/>
+		<s:Button click="sortAC(['POP2008'])" label="['POP2008']" styleName="jkBase"/>
+		<s:Label text="{elapsedTime}"/>
+		<mx:DataGrid dataProvider="{ac}" fontFamily="Arial" rowCount="8"/>
+	</s:VGroup>
+	
+	
+</s:Application>

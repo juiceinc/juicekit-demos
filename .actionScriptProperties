@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<actionScriptProperties analytics="false" mainApplicationPath="data/QueryExamples.mxml" projectUUID="8e62a60b-f186-4c5a-b448-dbd0457014d5" version="6">
+  <compiler additionalCompilerArguments="-locale en_US" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
+    <compilerSourcePath/>
+    <libraryPath defaultLinkType="0">
+      <libraryPathEntry kind="4" path="">
+        <excludedEntries>
+          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
+        </excludedEntries>
+      </libraryPathEntry>
+      <libraryPathEntry kind="1" linkType="1" path="libs"/>
+      <libraryPathEntry kind="3" linkType="1" path="/juicekit-flex-core/bin/juicekit-flex-core.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="/juicekit-flex-data/bin/juicekit-flex-data.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="/juicekit-flex-encode/bin/juicekit-flex-encode.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="/juicekit-flex-visualizations/bin/juicekit-flex-visualizations.swc" useDefaultLinkType="false"/>
+    </libraryPath>
+    <sourceAttachmentPath/>
+  </compiler>
+  <applications>
+    <application path="core/InactivityTest.mxml"/>
+    <application path="encode/EncoderDemo.mxml"/>
+    <application path="visualizations/Treemap.mxml"/>
+    <application path="core/BrowserResizerTest.mxml"/>
+    <application path="encode/EncodedArrayCollection.mxml"/>
+    <application path="core/InactivityMXMLTest.mxml"/>
+    <application path="core/AnimationAndContainers.mxml"/>
+    <application path="core/AnimationTest.mxml"/>
+    <application path="core/FormattingStrings.mxml"/>
+    <application path="data/DataParse.mxml"/>
+    <application path="core/FilteringAndSorting.mxml"/>
+    <application path="data/QueryExamples.mxml"/>
+    <application path="data/SortPerformance.mxml"/>
+  </applications>
+  <modules/>
+  <buildCSSFiles/>
+</actionScriptProperties>

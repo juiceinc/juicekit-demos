@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" creationComplete="dataLoader.send();" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:data="org.juicekit.data.*" xmlns:controls="org.juicekit.controls.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import flare.vis.data.Data;
+			import flare.vis.data.DataSprite;
+			import flare.vis.data.NodeSprite;
+			import flare.vis.data.Tree;
+			import flare.vis.operator.encoder.PropertyEncoder;
+			
+			import flash.utils.setTimeout;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.DragEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.http.HTTPService;
+			
+			import org.juicekit.data.converter.DelimitedTextConverter;
+			import org.juicekit.events.DataMouseEvent;
+			import org.juicekit.query.methods.*;
+			import org.juicekit.util.GraphUtil;
+			import org.juicekit.util.Strings;
+			
+			private var d:Array;
+			[Bindable] private var levelOrder:Array = ['AGE', 'SEX', 'STATE'];
+			
+			public function resultHandler(event:ResultEvent):void {
+				d = new DelimitedTextConverter(',').parse(event.result as String).nodes.data;
+				/*
+				The data looks like this:
+				
+				STATE,SEX,AGE,POP2000,POP2008
+				Alabama,M,0,30479,32055
+				Alabama,M,1,29904,32321
+				Alabama,M,2,30065,31789
+				Alabama,M,3,29932,31371
+				Alabama,M,4,30319,31164
+				Alabama,M,5,31127,31049
+				Alabama,M,6,31466,30960
+				*/
+				generateTreemapData();
+			}
+			
+			public function generateTreemapData():void {
+				currentState = 'loading';
+				var t:Tree = GraphUtil.treeMap(d,                       // An array containing data 
+											   levelOrder.slice(0,2),   // The "levels" of the treemap"
+											   ['POP2000', 'POP2008',
+												   {change: pctchange('POP2008', 'POP2000')},
+												   {pctFemale: div(sum(iff(eq('SEX', _('F')),'POP2008',_(0))), sum('POP2008')) },
+												   {avgAge: wtdaverage('AGE', 'POP2008')}]); // The metrics
+				// Percentage change in population from 2000 to 2008.
+				// change = (POP2008 - POP2000) / POP2000
+				
+				treemap.data = t;
+				
+				
+				treemap.addEventListener(DataMouseEvent.MOUSE_OVER, function(e:DataMouseEvent):void {
+					if ((e.dataSprite as NodeSprite).childDegree == 0) {
+						selectedNode.htmlText = Strings.format("<b>State:</b> {0}<br/>" + 
+							                                   "<b>Sex:</b> {1}<br/>" + 
+															   "<b>Age:</b> {2}<br/>" + 
+															   "<b>AvgAge:</b> {3:0.0}<br/>" + 
+															   "<b>Pop. in 2000:</b> {4:#,##0}<br/>" +  
+															   "<b>Pop. in 2008:</b> {5:#,##0} (size)<br/>" + 
+															   "<b>Change:</b> {6:0.0%} (color)", 
+															   e.data.STATE, e.data.SEX, e.data.AGE, e.data.avgAge, e.data.POP2000, e.data.POP2008, e.data.change);
+					}
+				});
+				treemap.addEventListener(DataMouseEvent.MOUSE_OUT, function(e:DataMouseEvent):void {
+					selectedNode.text = '';
+				});
+				
+				currentState = 'complete';
+			}
+			
+			private function handleBtnReorder(event:DragEvent):void {
+				currentState = 'loading';
+				// delay briefly to allow the move animation to complete
+				setTimeout(function():void {
+					generateTreemapData()
+				}, 200);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<mx:HTTPService id="dataLoader"
+						url="http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv"
+						method="GET"
+						showBusyCursor="true"
+						result="resultHandler(event)"
+						resultFormat="text"/>
+	</fx:Declarations>
+	
+	
+	<s:states>
+		<s:State name="loading"/>
+		<s:State name="complete"/>
+	</s:states>                
+	
+	<mx:VBox width="100%" height="100%">
+		<mx:HBox>
+			<mx:Label text="Population Growth by Age, Gender, and State" styleName="jkHeader" fontSize="18" fontWeight="bold" />
+		</mx:HBox>
+		<mx:Label text="This demo illustrates the features of the JuiceKit treemap. Source: US Census Bureau" styleName="jkBase"/>
+		
+		<mx:HBox>
+			<mx:Label text="Group by:"/>
+			<mx:HorizontalList id="hl"
+							   dataProvider="{levelOrder}"
+							   dragComplete="handleBtnReorder(event)"
+							   dragMoveEnabled="true"
+							   dropEnabled="true"
+							   dragEnabled="true"
+							   width="220"
+							   useRollOver="false"
+							   selectionColor="#ffffff">
+				<mx:itemRenderer>
+					<fx:Component>
+						<mx:Button label="{data}" width="60" height="20"/>
+					</fx:Component>
+				</mx:itemRenderer>
+			</mx:HorizontalList>
+			<mx:Label text="Color by:"/>
+			<mx:ComboBox id="colorCmb" selectedIndex="0" dataProvider="['change', 'avgAge', 'pctFemale', 'POP2000', 'POP2008']"/>
+			<mx:Label text="Size by:"/>
+			<mx:ComboBox id="sizeCmb" selectedIndex="0" dataProvider="['POP2000', 'POP2008']"/>
+			<mx:Label text="Color palette:"/>
+			<mx:ComboBox id="paletteCmb"
+						 selectedIndex="0"
+						 dataProvider="['hot', 'summer', 'cool', 'Purples', 'YlGn', 'RdGy', 'PuOr']"
+						 itemRenderer="visualizations.renderer.PaletteRenderer"
+						 dropdownWidth="200"
+						 rowCount="8"/>
+		</mx:HBox>
+		
+		
+		<controls:TreeMapZoomControl tree="{treemap}" fontSize="16" color="#333333"/>
+		<mx:Canvas width="100%" height="100%">
+			<!-- 
+			this appears when the treemap is loading or regenerating
+			it's visibility is controlled by the 'loading' state       
+			-->
+			<mx:Label visible.complete="false" visible.loading="true" id="loadingLbl" text="Loading" color="#cccccc" fontSize="48"/>
+			
+			<!-- the treemap itself -->
+			<mx:HBox visible.complete="true" visible.loading="false" id="treemapHBox" width="100%" height="100%">
+				
+				<controls:TreeMapControl id="treemap"
+										 width="100%"
+										 height="100%" 
+										 fontFamily="Arial"
+										 transitionPeriod="1.2"
+										 palette="{paletteCmb.selectedItem}"
+										 colorEncodingField="{colorCmb.selectedItem}"
+										 sizeEncodingField="{sizeCmb.selectedItem}"
+										 styleFromDataRoot="true"
+										 fontSize="16"
+										 labelEncodingField="name"
+										 labelColorStrategy="glow"
+										 truncateToFit="true"
+										 strokeColors="[0xffffff, 0x000000, 0x000000, 0x333333]"
+										 strokeAlphas="[1,1,1,1]"
+										 strokeThicknesses="[0,4,2,0.25]"/>
+				
+				<mx:Text id="selectedNode" width="250"/>
+			</mx:HBox>
+		</mx:Canvas>
+	</mx:VBox>
+	
+</s:Application>

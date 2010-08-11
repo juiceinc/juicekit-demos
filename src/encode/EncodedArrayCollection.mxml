@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:collections="org.juicekit.collections.*" xmlns:encoder="org.juicekit.encoder.*">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.utils.ObjectProxy;
+			
+			[Bindable]
+			public var ac:ArrayCollection = new ArrayCollection([
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+			]);
+						
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<encoder:ColorEncoder id="enc" source="b" target="clr" scaleMax="1000" scaleMin="0" palette="RdYlGn"/>
+		<encoder:SizeEncoder id="sizeenc" source="b" target="size" paletteIs2D="false" scaleMax="1000" scaleMin="0" paletteMin="200" paletteMax="400"/>
+		
+		<collections:JKArrayCollection id="jkac" dataProvider="{ac}" operatorList="{new OperatorList(enc, sizeenc)}">
+		</collections:JKArrayCollection>
+		
+	</fx:Declarations>
+	<s:DataGroup dataProvider="{jkac}" >
+		<s:layout>
+			<s:VerticalLayout/>
+		</s:layout>
+		<s:itemRenderer>
+			<fx:Component>
+				<s:ItemRenderer>
+					<s:Label text="{data.b}" color="{data.clr}"/>
+				</s:ItemRenderer>
+			</fx:Component>
+		</s:itemRenderer>
+	</s:DataGroup>
+	<s:Button click="{jkac.update()}"/>
+
+</s:Application>

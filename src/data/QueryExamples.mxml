@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" creationComplete="application1_creationCompleteHandler(event)"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:data="org.juicekit.data.*">
+	
+	<!--
+	
+	This demonstrates a wide variety of Query examples. 
+
+	-->
+	
+	<fx:Declarations>
+		
+		<data:ArrayCollectionFromUrl id="data1" url="http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv"/>
+		
+		<data:LiveQuery id="liveQuery" dataProvider="{data1.result}" query="{query}"/>
+		
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			import org.juicekit.query.Query;
+			import org.juicekit.query.methods.*;
+			import org.juicekit.util.helper.Formatter;
+			
+			import data.query.QueryExampleBase;
+			import data.query.QueryExampleText;
+			
+			public var sampleurl:String = "http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv";
+
+			public var examples:ArrayCollection = new ArrayCollection([new QueryExampleBase()]);
+				
+			[Bindable]
+			public var query:Query = new Query();
+				
+
+			
+			protected function application1_creationCompleteHandler(event:FlexEvent):void
+			{
+				examples.addItem(new QueryExampleBase('Distinct states',
+					'Use groupby to create a list of distinct states. Grouping will implicity apply an ordering to your data.',
+					QueryExampleText.x1,
+					QueryExampleText.q1));
+				examples.addItem(new QueryExampleBase('Summarizing data',
+					'Select can also perform summarizations.',
+					QueryExampleText.x2,
+					QueryExampleText.q2));
+				examples.addItem(new QueryExampleBase('Calculated fields and sorting',
+					'You can perform lots of calculations on fields. This query is relatively slow because it operates on all rows and sorts the data.',
+					QueryExampleText.x8,
+					QueryExampleText.q8));
+				examples.addItem(new QueryExampleBase('Percent change and object syntax',
+					'The select function takes a variable number of parameters that can be Strings or Objects. If String, the matching field will be returned. If an Object, the object keys become field names, and the values can be either property names or Expressions. In this example we use one property and three expressions.',
+					QueryExampleText.x3,
+					QueryExampleText.q3));				
+				examples.addItem(new QueryExampleBase('Functions and standard deviations',
+					'A variety of transformation functions are possible. ',
+					QueryExampleText.x4,
+					QueryExampleText.q4));
+				examples.addItem(new QueryExampleBase('Simple filtering with where',
+					'Where statements evaluate each raw row against an expression. The "_" function lets you construct Literal objects. This where statement checks if the "STATE" property is equal to the literal value "California".',
+					QueryExampleText.x5,
+					QueryExampleText.q5));
+				examples.addItem(new QueryExampleBase('Complex wheres with and and or',
+					'Where statements evaluate each raw row against an expression. The "_" function lets you construct Literal objects. This where statement checks if the "STATE" property is equal to the literal value "California" and the "AGE" is greater than the literal value 40.',
+					QueryExampleText.x6,
+					QueryExampleText.q6));
+				examples.addItem(new QueryExampleBase('Stacking where clauses',
+					'Where clauses can also be stacked. Stacked wheres are ANDed together. This generates the same result as the previous query but is easier to read.',
+					QueryExampleText.x7,
+					QueryExampleText.q7));
+				examples.addItem(new QueryExampleBase('Simple expressions',
+					'Expressions exist to add, subtract, multiply and divide.',
+					QueryExampleText.x8,
+					QueryExampleText.q8));
+				examples.addItem(new QueryExampleBase('Aggregate expressions',
+					'Aggregate expressions will automatically apply grouping to your data. In this example, the sum() Expression causes the entire data to be grouped into a single row. Aggregate expressions include: sum, pctchange, wtdavg',
+					QueryExampleText.x9, 
+					QueryExampleText.q9));
+				examples.addItem(new QueryExampleBase('Mixing aggregate and row expressions with map()',
+					'The map() operator lets you mix aggregate expressions with row level expressions. Here we calculate each rows percent of the total population.',
+					QueryExampleText.x10, 
+					QueryExampleText.q10));
+				examples.addItem(new QueryExampleBase('Changing data with update()',
+					'The update() operator can be used instead of select() to change your data directly. Notice how every subsequent query is affected by the new value of POP2008.',
+					QueryExampleText.x11, 
+					QueryExampleText.q11));
+				
+			}
+
+		]]>
+	</fx:Script>
+	
+	<fx:Style source="style.css"/>
+	
+	<s:HGroup paddingLeft="20" paddingTop="20" gap="20">
+		
+		<s:VGroup gap="5">			
+			<s:Label text="Raw data" styleName="jkHeader"/>
+			<s:Label text="ArrayCollectionFromUrl loads data in delimited data files." styleName="jkNotes"/>
+			<s:Label text="{data1.result.length} rows" styleName="jkNotes"/>
+			<mx:DataGrid dataProvider="{data1.result}" fontFamily="Arial" fontSize="11" rowCount="30" rowHeight="18" paddingTop="0" paddingBottom="0">
+				<mx:columns>
+					<mx:DataGridColumn dataField="STATE"/>
+					<mx:DataGridColumn dataField="SEX" width="40"/>
+					<mx:DataGridColumn dataField="AGE" width="40"/>
+					<mx:DataGridColumn dataField="POP2000" width="70"/>
+					<mx:DataGridColumn dataField="POP2008" width="70"/>
+				</mx:columns>
+			</mx:DataGrid>
+			
+		</s:VGroup>
+		
+		<mx:Canvas width="1" height="500" backgroundColor="0xdedede"/>
+		
+		<s:VGroup gap="5" width="400">			
+			<s:Label text="Query Examples" styleName="jkHeader"/>
+			<s:Label text="Select any of these samples." styleName="jkNotes"/>
+			<s:Label text=" " styleName="jkNotes"/>
+			<s:List width="100%" id="exampleList" dataProvider="{examples}" change="query = exampleList.selectedItem.query">
+				<s:itemRenderer>
+					<fx:Component>
+						<s:ItemRenderer>
+							<s:Label text="{data['title']}"/>
+						</s:ItemRenderer>
+					</fx:Component>
+				</s:itemRenderer>
+			</s:List>			
+
+			<mx:Spacer height="20"/>
+			<s:Label text="{(exampleList.selectedItem as QueryExampleBase).title}" styleName="jkHeader" width="100%"/>
+			<s:Label text="{(exampleList.selectedItem as QueryExampleBase).description}" styleName="jkNotes" width="100%"/>
+			<mx:Spacer height="20"/>
+			<s:Label text="{(exampleList.selectedItem as QueryExampleBase).queryStr}" fontFamily="Courier New" fontSize="11.5" width="100%"/>
+		</s:VGroup>
+
+		<mx:Canvas width="1" height="500" backgroundColor="0xdedede"/>
+
+		<s:VGroup gap="5">			
+			<s:Label text="Result of Query" styleName="jkHeader"/>
+			<s:Label text="The result of evaluating the selected query against the raw data." styleName="jkNotes"/>
+			<s:Label text="Generated in {liveQuery.evalTime/1000} seconds." styleName="jkNotes"/>
+			<mx:DataGrid dataProvider="{liveQuery.result}" fontFamily="Arial" fontSize="11" rowCount="30" rowHeight="18" paddingTop="0" paddingBottom="0">
+			</mx:DataGrid>
+		</s:VGroup>
+	</s:HGroup>
+	
+</s:Application>

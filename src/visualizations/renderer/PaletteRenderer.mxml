@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" initialize="init()" 
+		   width="180" height="16" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+	<mx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.controls.Alert;
+			import mx.effects.AnimateProperty;
+			
+			import org.juicekit.palette.ColorPalette;
+			import org.juicekit.util.Colors;
+			
+			[Bindable]
+			public var color:uint = 0;
+			
+			private var origValues:Array = [];
+			
+			public var mogrifications:Array = [];
+			
+			[Bindable]
+			public function set palette(v:String):void {
+				_palette = v;
+				colorPalette = ColorPalette.getPaletteByName(palette, 100);
+				colorPalette.addEventListener('colorsChanged', function(e:Event):void { invalidateDisplayList(); });
+				invalidateDisplayList();
+				origValues = colorPalette.values.slice();
+			}
+			public function get palette():String {
+				return _palette;
+			}
+			private var _palette:String = 'spectral';
+			
+			override public function set data(v:Object):void {
+				palette = v as String;
+			}
+			
+			override public function get data():Object {
+				return palette;
+			}
+			
+			[Bindable]
+			public var colorPalette:ColorPalette = ColorPalette.getPaletteByName(palette, 16);
+			
+			public function mogrify(s:String):void {
+				colorPalette[s]();
+				mogrifications.push(s);
+				callLater(invalidateDisplayList);
+			}
+			
+			public function reset():void {
+				mogrifications = [];
+				colorPalette.values = origValues.slice();
+				callLater(invalidateDisplayList);
+			}
+			
+			public function init():void {
+				colorPalette.addEventListener('colorsChanged', function(e:Event):void { callLater(invalidateDisplayList) });
+				this.addEventListener(MouseEvent.CLICK, function(e:Event):void {
+					dispatchEvent(new Event('paletteSelected'));
+				});
+				origValues = colorPalette.values.slice();
+			}
+			
+			override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void {
+				color = Colors.whiteOrBlack(colorPalette.getColorByIndexFromAC(0));
+				super.updateDisplayList(unscaledWidth, unscaledHeight);
+				Timer
+				var len:int = colorPalette.length;
+				var idx:int = 0;
+				var w:Number = unscaledWidth / len;
+				for each (var c:uint in colorPalette.values) {
+					
+					graphics.beginFill(0xffffff & c, 1);
+					graphics.drawRect(idx*w,0,w,unscaledHeight);
+					idx += 1; 
+				}
+			}      
+		]]>
+	</mx:Script>
+	
+	<mx:Label text="{palette}" mouseEnabled="false" fontSize="11" fontGridFitType="subpixel" color="{color}" id="label1"/>
+</mx:Canvas>

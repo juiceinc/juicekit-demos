@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"  creationComplete="application1_creationCompleteHandler(event)"
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:scale="klee.scale.*" xmlns:encoder="org.juicekit.encoder.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.controls.DataGrid;
+			import mx.events.FlexEvent;
+			import mx.utils.ObjectProxy;
+			
+			import org.juicekit.collections.JKArrayCollection;
+			import org.juicekit.util.helper.Formatter;
+			
+			[Bindable]
+			public var val:Number = 595;
+			
+			
+			[Bindable]
+			public var dac:JKArrayCollection = new JKArrayCollection([
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+				new ObjectProxy({ a: 0, b: 1000*Math.random() }),
+			]);
+			
+			
+			
+			protected function application1_creationCompleteHandler(event:FlexEvent):void
+			{
+				dac.operatorList.add(enc);
+				dac.operatorList.add(sizeenc);
+				enc.addEventListener('updateEncoder', function():void {
+					dac.update();
+				});
+				sizeenc.addEventListener('updateEncoder', function():void {
+					dac.update();
+				});
+				enc.dataProvider = dac;
+				sizeenc.dataProvider = dac;
+				dac.update();
+				dg.dataProvider = dac;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<encoder:ColorEncoder id="enc" source="b" scaleMax="{slider.value}" scaleMin="0" palette="RdYlGn"/>
+		<encoder:SizeEncoder id="sizeenc" source="b" paletteIs2D="{cb.selected}" scaleMax="{slider.value}" scaleMin="0" paletteMin="{sizeslider2.value}" paletteMax="{sizeslider.value}"/>
+	</fx:Declarations>
+	
+	<s:VGroup paddingLeft="20" paddingTop="20" id="vert" gap="0">
+		<s:TextInput id="ti" width="100" enter="enc.palette = ti.text"/>
+		<mx:Spacer height="15"/>
+		<s:Label text="data"/>
+		<s:HSlider minimum="0" maximum="1000" id="valSlider" value="595" change="val = valSlider.value"/>   
+		<mx:Spacer height="15"/>
+		<s:Label text="scale max"/>
+		<s:HSlider minimum="0" maximum="1000" id="slider" value="800"/>   
+		<mx:Spacer height="15"/>
+		<s:Label text="size max"/>
+		<s:HSlider minimum="0" maximum="200" id="sizeslider" value="800"/>   
+		<mx:Spacer height="15"/>
+		<s:Label text="size min"/>
+		<s:HSlider minimum="0" maximum="20" id="sizeslider2" value="20"/>   
+		<mx:Spacer height="15"/>
+		<s:CheckBox label="is 2d" selected="false" id="cb"/>   
+		<mx:Spacer height="15"/>
+		<s:BorderContainer height="100" width="100" backgroundColor="{enc.encode(val)}"/>
+		
+		<mx:Spacer height="15"/>
+		<s:HGroup gap="1">
+			<s:BorderContainer height="{sizeenc.encode(000)}" width="10" backgroundColor="{enc.encode(0)}"/>
+			<s:BorderContainer height="{sizeenc.encode(100)}" width="10" backgroundColor="{enc.encode(100)}"/>
+			<s:BorderContainer height="{sizeenc.encode(200)}" width="10" backgroundColor="{enc.encode(200)}"/>
+			<s:BorderContainer height="{sizeenc.encode(300)}" width="10" backgroundColor="{enc.encode(300)}"/>
+			<s:BorderContainer height="{sizeenc.encode(400)}" width="10" backgroundColor="{enc.encode(400)}"/>
+			<s:BorderContainer height="{sizeenc.encode(500)}" width="10" backgroundColor="{enc.encode(500)}"/>
+			<s:BorderContainer height="{sizeenc.encode(600)}" width="10" backgroundColor="{enc.encode(600)}"/>
+			<s:BorderContainer height="{sizeenc.encode(700)}" width="10" backgroundColor="{enc.encode(700)}"/>
+			<s:BorderContainer height="{sizeenc.encode(800)}" width="10" backgroundColor="{enc.encode(800)}"/>
+			<s:BorderContainer height="{sizeenc.encode(900)}" width="10" backgroundColor="{enc.encode(900)}"/>
+			<s:BorderContainer height="{sizeenc.encode(1000)}" width="10" backgroundColor="{enc.encode(1000)}"/>      
+		</s:HGroup>
+		<s:Group>
+			<s:BorderContainer x="{sizeenc.encode(000)}" height="10" width="10" backgroundColor="{enc.encode(0)}"/>
+			<s:BorderContainer x="{sizeenc.encode(100)}" height="10" width="10" backgroundColor="{enc.encode(100)}"/>
+			<s:BorderContainer x="{sizeenc.encode(200)}" height="10" width="10" backgroundColor="{enc.encode(200)}"/>
+			<s:BorderContainer x="{sizeenc.encode(300)}" height="10" width="10" backgroundColor="{enc.encode(300)}"/>
+			<s:BorderContainer x="{sizeenc.encode(400)}" height="10" width="10" backgroundColor="{enc.encode(400)}"/>
+			<s:BorderContainer x="{sizeenc.encode(500)}" height="10" width="10" backgroundColor="{enc.encode(500)}"/>
+			<s:BorderContainer x="{sizeenc.encode(600)}" height="10" width="10" backgroundColor="{enc.encode(600)}"/>
+			<s:BorderContainer x="{sizeenc.encode(700)}" height="10" width="10" backgroundColor="{enc.encode(700)}"/>
+			<s:BorderContainer x="{sizeenc.encode(800)}" height="10" width="10" backgroundColor="{enc.encode(800)}"/>
+			<s:BorderContainer x="{sizeenc.encode(900)}" height="10" width="10" backgroundColor="{enc.encode(900)}"/>
+			<s:BorderContainer x="{sizeenc.encode(1000)}" height="10" width="10" backgroundColor="{enc.encode(1000)}"/>      
+			<s:Label text="{sizeenc.encode(1000)}"/>      
+		</s:Group>
+	</s:VGroup>
+	<mx:DataGrid id="dg" left="400" variableRowHeight="true" width="300" height="700">
+		<mx:columns>
+			<mx:DataGridColumn itemRenderer="encode.renderer.EncodedItemRenderer" dataField="b" labelFunction="{Formatter.dataGridLabelFunction('0.0')}"/>
+		</mx:columns>
+	</mx:DataGrid>
+</s:Application>
