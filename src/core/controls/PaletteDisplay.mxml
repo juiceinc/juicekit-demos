@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" initialize="init()" 
+		   width="100%" height="100" horizontalScrollPolicy="auto" verticalScrollPolicy="off" 
+		   xmlns:controls="controls.*">
+	
+	<mx:Script>
+		<![CDATA[
+			
+		]]>
+	</mx:Script>
+	<mx:HBox id="hbox" horizontalGap="1" top="0" >
+	</mx:HBox>
+	<mx:LinkButton fontFamily="Arial" fontSize="9" top="90" color="#666666" label="Copy to Clipboard" click="copyToClipboard()"/>
+</mx:Canvas>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.binding.utils.BindingUtils;
+			import mx.effects.AnimateProperty;
+			
+			import org.juicekit.palette.ColorPalette;
+			import org.juicekit.util.Strings;
+			import org.juicekit.util.helper.Clipboard;
+			
+			
+			[Bindable]
+			public function set colorPalette(v:ColorPalette):void {
+				_colorPalette = v;
+				init();
+			}
+			public function get colorPalette():ColorPalette {
+				return _colorPalette
+			}
+			private var _colorPalette:ColorPalette = ColorPalette.getPaletteByName('spectral', 16);
+			
+			public function init():void {
+				while (hbox.numChildren>0) {
+					hbox.removeChildAt(0);
+				}
+				if (colorPalette != null) {
+					for each (var c:uint in colorPalette.values) {
+						var cb:ColorBlock = new ColorBlock();
+						cb.color = c;
+						hbox.addChild(cb);
+					}
+				}
+			}
+			
+			private function copyToClipboard():void {
+				var arr:Array = []
+				for each (var c:uint in colorPalette.values) {
+					arr.push([Strings.format('#{0:x6}', c & 0xffffff)]);
+				}
+				Clipboard.putTabularArray(arr);
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:HBox id="hbox" horizontalGap="1" top="0" >
+	</mx:HBox>
+	<mx:LinkButton fontFamily="Arial" fontSize="9" top="90" color="#666666" label="Copy to Clipboard" click="copyToClipboard()"/>
+</s:Group>

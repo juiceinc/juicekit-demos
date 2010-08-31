@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<util:DemoApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  
+                      xmlns:s="library://ns.adobe.com/flex/spark" 
+                      xmlns:mx="library://ns.adobe.com/flex/mx" 
+                      xmlns:local="*" 
+                      xmlns:containers="org.juicekit.containers.*" 
+                      xmlns:util="util.*">
+    
+    
+    <!---
+    
+    An InactivityMonitor can be attached to a component. It dispatches an Event when a 
+    certain amount of time has elapsed without a specified event occuring.
+    
+    -->
+    <fx:Declarations>
+        <fx:String id="helpText">
+        <![CDATA[
+This demo shows how to build a multi-stage animation using Sequence.
+            ]]>
+        </fx:String>
+        <fx:String id="helpCode">
+            <![CDATA[
+var t:Transitioner = new Transitioner();
+t.duration = 2.0;
+t.setValue(container1, 'height', 50);
+t.setValue(container2, 'width', 150);
+t.setValue(container1, 'backgroundColor', 0x0000ff);
+t.setValue(container2, 'backgroundColor', 0x006666);
+t.setValue(container1, 'alpha', 1);
+
+
+var t2:Transitioner = new Transitioner();
+t2.easing = Easing.easeOutBounce;
+t2.setValue(container1, 'height', 150);
+t2.setValue(container2, 'width', 50);
+t2.setValue(container1, 'backgroundColor', 0x00ffff);
+t2.setValue(container2, 'backgroundColor', 0x3366ff);
+t2.setValue(container1, 'alpha', .1);
+
+// The Sequence plays transitioner t
+// then pauses for 1 second, then plays
+// the changes in transitioner t2
+// There is a 1 second delay before the animation plays
+var seq:Sequence = new Sequence(t, new Pause(1), t2);
+seq.delay = 1;
+
+seq.play();
+            ]]>
+        </fx:String>
+    </fx:Declarations>    
+    
+    
+    <fx:Style source="style.css"/>
+    
+    <fx:Script>
+    <![CDATA[
+        import org.juicekit.animate.Easing;
+        import org.juicekit.animate.Pause;
+        import org.juicekit.animate.Sequence;
+        import org.juicekit.animate.Transitioner;
+        
+        
+        protected function animateSequence():void {
+            var t:Transitioner = new Transitioner();
+            t.duration = 2.0;
+            t.setValue(container1, 'height', 50);
+            t.setValue(container2, 'width', 150);
+            t.setValue(container1, 'backgroundColor', 0x0000ff);
+            t.setValue(container2, 'backgroundColor', 0x006666);
+            t.setValue(container1, 'alpha', 1);
+            
+            
+            var t2:Transitioner = new Transitioner();
+            t2.easing = Easing.easeOutBounce;
+            t2.setValue(container1, 'height', 150);
+            t2.setValue(container2, 'width', 50);
+            t2.setValue(container1, 'backgroundColor', 0x00ffff);
+            t2.setValue(container2, 'backgroundColor', 0x3366ff);
+            t2.setValue(container1, 'alpha', .1);
+            
+            // The Sequence plays transitioner t
+            // then pauses for 1 second, then plays
+            // the changes in transitioner t2
+            // There is a 1 second delay before the animation plays
+            var seq:Sequence = new Sequence(t, new Pause(1), t2);
+            seq.delay = 1;
+            
+            seq.play();
+            
+        }
+        
+    ]]>
+    </fx:Script>
+    
+    <fx:Style source="style.css"/>
+    
+    
+    <s:VGroup paddingLeft="20" paddingTop="20">
+        <s:Label text="Sequenced Animation" styleName="jkHeader"/>
+        <s:Label text="This illustrates a sequenced animation. " styleName="jkBase"/>
+        <s:Button label="Click to animate" click="animateSequence()"/>
+        <s:HGroup>
+            <s:BorderContainer id="container1" backgroundColor="red" height="100" width="100">
+                <s:Label text="Container 1: This is some interior text" styleName="jkNotes" color="white" width="100%"/>
+            </s:BorderContainer>
+            
+            <s:BorderContainer id="container2" backgroundColor="red" height="100" width="100">
+                <s:Label text="Container 2: This is some interior text" styleName="jkNotes" color="white" width="100%"/>
+            </s:BorderContainer>
+        </s:HGroup>
+    </s:VGroup>    
+    
+</util:DemoApplication>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" width="36" height="90" fontFamily="Arial" fontSize="9" gap="-2" >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import org.juicekit.util.Colors;
+			import org.juicekit.util.Strings;
+			/**
+			 * 
+			 * A utility component to test the Color palette logic
+			 *
+			 */
+			
+			[Bindable]
+			private var _color:uint = 0x000000;
+			[Bindable]
+			private var _lblcolor:uint = 0xffffff;
+			
+			// A function taking a color or a color generating function
+			public var labelColor:Object = Colors.whiteOrBlack;
+			
+			
+			[Bindable]
+			public function get color():uint { return _color; }
+			public function set color(c:uint):void {
+				_color = c;
+				this.setStyle('backgroundColor', c);
+				_lblcolor = Colors.whiteOrBlack(c);
+			}
+			
+		]]>
+	</fx:Script>
+
+	<mx:Label fontSize="9" text="{'R:'+Colors.r(color)}" color="{_lblcolor}"/>
+	<mx:Label fontSize="9" text="{'G:'+Colors.g(color)}" color="{_lblcolor}"/>
+	<mx:Label fontSize="9" text="{'B:'+Colors.b(color)}" color="{_lblcolor}"/>
+	<mx:Spacer height="4"/>
+	<mx:Label fontSize="9" text="{'H:'+Strings.format('{0:0.000}', Colors.hue(color))}" color="{_lblcolor}" width="70"/>
+	<mx:Label fontSize="9" text="{'S:'+Strings.format('{0:0.000}', Colors.saturation(color))}" color="{_lblcolor}" width="70"/>
+	<mx:Label fontSize="9" text="{'V:'+Strings.format('{0:0.000}', Colors.value(color))}" color="{_lblcolor}" width="70"/>
+</s:VGroup>

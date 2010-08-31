@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
-			   xmlns:s="library://ns.adobe.com/flex/spark" 
-			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:data="org.juicekit.data.*">
-
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"  label="Loading Data"
+		 xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:data="org.juicekit.data.*">
+	
 	<!--
 	
 	This example demonstrates a few of <b>juicekit-data</b>'s capabilities.  
@@ -16,7 +16,7 @@
 	-->
 	
 	<fx:Declarations>
-
+		
 		<data:ArrayCollectionFromUrl id="data1" url="http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv"/>
 		
 		<data:ArrayCollectionFromUrl id="data2" url="http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv" postprocessRow="postprocessRow"/>
@@ -58,15 +58,13 @@
 			public var q:Query = select({'STATE': 'STATE',
 				'POP2000':  sum('POP2000'),
 				'POP2008':   sum('POP2008'),
-			    'Pct Change': pctchange('POP2008','POP2000')})
+				'Pct Change': pctchange('POP2008','POP2000')})
 				.groupby('STATE')
 				.orderby('STATE')
 				
 				
 		]]>
 	</fx:Script>
-
-	<fx:Style source="style.css"/>
 	
 	<s:VGroup paddingLeft="20" paddingTop="20" gap="5">
 		
@@ -95,4 +93,4 @@
 		</mx:DataGrid>
 	</s:VGroup>
 	
-</s:Application>
+</mx:VBox>

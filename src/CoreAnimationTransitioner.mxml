@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<util:DemoApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  
+                      xmlns:s="library://ns.adobe.com/flex/spark" 
+                      xmlns:mx="library://ns.adobe.com/flex/mx" 
+                      xmlns:local="*" 
+                      xmlns:containers="org.juicekit.containers.*" 
+                      xmlns:util="util.*" 
+                      xmlns:util1="org.juicekit.util.*">
+    
+    
+    <!---
+    
+    Demonstrates how to use JuiceKit's Transitioner class.
+    
+    -->
+    
+    <fx:Declarations>
+        <fx:String id="helpText">
+            <![CDATA[
+This compares the syntax of animation with JuiceKit Transitioner and Flex's spark.effects package. We perform an animation of x, y, z, and alpha for 100 ItemRenderers that contain BorderContainers.  
+            ]]>
+        </fx:String>
+        
+        <fx:String id="helpCode">
+            <![CDATA[
+// JuiceKit Transitioner animation (8 lines of code)
+var t:Transitioner = new Transitioner(2);
+for (var i:int = 0; i<elts; i++) {
+var e:IVisualElement = dg.getElementAt(i);
+    t.setValues(e, {x: Math.random()*500,
+                    y: Math.random()*500,
+                    z: 50-Math.random()*100,
+                    alpha: Math.random()});
+}
+t.play();
+
+
+// Spark style (15 lines of code)
+var effects:Parallel = new Parallel();
+var elts:int = dg.numElements;
+for (var i:int = 0; i<elts; i++) {
+    var e:IVisualElement = dg.getElementAt(i);
+    
+    var move:spark.effects.Move3D = new Move3D(e);
+    move.duration = 2000;
+    move.xTo = Math.random()*500;
+    move.yTo = Math.random()*500;
+    move.zTo = 50-Math.random()*100;
+    effects.addChild(move);
+    
+    var fade:spark.effects.Fade = new spark.effects.Fade(e);
+    fade.duration = 2000;
+    fade.alphaTo = Math.random();
+    effects.addChild(fade);
+}
+effects.play();
+            
+            ]]>
+        </fx:String>
+    </fx:Declarations>
+    
+    
+    <fx:Script>
+    <![CDATA[
+        import mx.collections.ArrayCollection;
+        import mx.core.IVisualElement;
+        import mx.effects.Move;
+        import mx.effects.Parallel;
+        import mx.events.EffectEvent;
+        import mx.events.FlexEvent;
+        
+        import org.juicekit.animate.TransitionEvent;
+        import org.juicekit.animate.Transitioner;
+        import org.juicekit.util.Arrays;
+        import org.juicekit.util.Colors;
+        import org.juicekit.util.Strings;
+        
+        import spark.components.supportClasses.ItemRenderer;
+        import spark.effects.*;
+        import spark.effects.Fade;
+        import spark.effects.Move;
+        
+        
+        [Bindable]
+        public var ac:ArrayCollection = new ArrayCollection(Arrays.range(0, 100));
+        
+        public function startAnimate():void {
+            counter.start();
+        }
+        
+        public function endAnimate(e:Event=null):void {
+            counter.stop();
+        }
+        
+        public function animateJK():void {				
+            var t:Transitioner = new Transitioner(2);
+            var elts:int = dg.numElements;
+            for (var i:int = 0; i<elts; i++) {
+                var e:IVisualElement = dg.getElementAt(i);
+                t.setValues(e, {x: Math.random()*500,
+                    y: Math.random()*500,
+                    z: 50-Math.random()*100,
+                    alpha: Math.random()});
+            }
+            startAnimate();
+            t.removeEventListener(TransitionEvent.END, endAnimate);
+            t.addEventListener(TransitionEvent.END, endAnimate);
+            t.play();
+        }
+        
+        
+        
+        public function animateFlex():void
+        {
+            var effects:Parallel = new Parallel();
+            
+            var elts:int = dg.numElements;
+            for (var i:int = 0; i<elts; i++) {
+                var e:IVisualElement = dg.getElementAt(i);
+                
+                var move:spark.effects.Move3D = new Move3D(e);
+                // If this is true, spark.effects.Move3D will apply
+                // the move through a transition matrix, while the original
+                // x, y, z are unchanged. The itemRenderer references
+                // the value of x to ensure that the x value is really changing.					
+                move.applyChangesPostLayout = false;
+                move.duration = 2000;
+                move.xTo = Math.random()*500;
+                move.yTo = Math.random()*500;
+                move.zTo = 50-Math.random()*100;
+                effects.addChild(move);
+                
+                var fade:spark.effects.Fade = new spark.effects.Fade(e);
+                fade.duration = 2000;
+                fade.alphaTo = Math.random();
+                effects.addChild(fade);
+            }
+            
+            startAnimate();
+            effects.removeEventListener(EffectEvent.EFFECT_END, endAnimate);
+            effects.addEventListener(EffectEvent.EFFECT_END, endAnimate);
+            effects.play();				
+        }
+        
+        
+    ]]>
+    </fx:Script>
+
+    <fx:Style source="style.css"/>
+    
+    
+    <s:VGroup paddingTop="20" paddingLeft="20">
+        <s:Label styleName="jkHeader" text="Animation with JuiceKit Transitioner and spark.effects.*"/>
+        <s:HGroup>
+            <s:Button label="Animate with JuiceKit Transitioner" click="animateJK()"/>
+            <s:Button label="Animate with spark.effects.*" click="animateFlex()"/>
+            <util1:FPSLabel id="counter"/>
+        </s:HGroup>
+        
+        <s:DataGroup id="dg" height="500" width="500" dataProvider="{ac}">
+            <s:layout>
+                <s:BasicLayout/>
+            </s:layout>
+            
+            <s:itemRenderer>
+                <fx:Component>
+                    <s:ItemRenderer autoDrawBackground="false" x="0" y="0" depth="0" depth.hovered="1">
+                        <fx:Script>
+                        <![CDATA[
+                            import org.juicekit.util.Strings;
+                            import org.juicekit.util.Colors;
+                            
+                        ]]>
+                        </fx:Script>
+                        <s:states>
+                            <s:State name="normal"/>
+                            <s:State name="hovered"/>
+                        </s:states>
+                        <s:BorderContainer id="inner" height="10" width="10" backgroundColor="{Colors.hsv(this.x/500, 1, 1)}" backgroundColor.hovered="blue" width.hovered="40"/>
+                    </s:ItemRenderer>				
+                </fx:Component>
+            </s:itemRenderer>	
+            
+        </s:DataGroup>	
+    </s:VGroup>
+    
+</util:DemoApplication>

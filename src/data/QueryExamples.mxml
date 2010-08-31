@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
-			   xmlns:s="library://ns.adobe.com/flex/spark" creationComplete="application1_creationCompleteHandler(event)"
-			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:data="org.juicekit.data.*">
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"  label="Query Examples"
+		 xmlns:s="library://ns.adobe.com/flex/spark" creationComplete="creationCompleteHandler(event)"
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="100%" height="100%" xmlns:data="org.juicekit.data.*">
 	
 	<!--
 	
 	This demonstrates a wide variety of Query examples. 
-
+	
 	-->
 	
 	<fx:Declarations>
@@ -30,15 +30,16 @@
 			import data.query.QueryExampleText;
 			
 			public var sampleurl:String = "http://media.juiceanalytics.com/census/CENSUS_STATEAGESEX.csv";
-
+			
+			[Bindable]
 			public var examples:ArrayCollection = new ArrayCollection([new QueryExampleBase()]);
-				
+			
 			[Bindable]
 			public var query:Query = new Query();
-				
-
 			
-			protected function application1_creationCompleteHandler(event:FlexEvent):void
+			
+			
+			protected function creationCompleteHandler(event:FlexEvent):void
 			{
 				examples.addItem(new QueryExampleBase('Distinct states',
 					'Use groupby to create a list of distinct states. Grouping will implicity apply an ordering to your data.',
@@ -90,13 +91,11 @@
 					QueryExampleText.q11));
 				
 			}
-
+			
 		]]>
 	</fx:Script>
 	
-	<fx:Style source="style.css"/>
-	
-	<s:HGroup paddingLeft="20" paddingTop="20" gap="20">
+	<s:HGroup paddingLeft="20" paddingTop="20" gap="20" width="100%" height="100%">
 		
 		<s:VGroup gap="5">			
 			<s:Label text="Raw data" styleName="jkHeader"/>
@@ -129,16 +128,16 @@
 					</fx:Component>
 				</s:itemRenderer>
 			</s:List>			
-
+			
 			<mx:Spacer height="20"/>
 			<s:Label text="{(exampleList.selectedItem as QueryExampleBase).title}" styleName="jkHeader" width="100%"/>
 			<s:Label text="{(exampleList.selectedItem as QueryExampleBase).description}" styleName="jkNotes" width="100%"/>
 			<mx:Spacer height="20"/>
 			<s:Label text="{(exampleList.selectedItem as QueryExampleBase).queryStr}" fontFamily="Courier New" fontSize="11.5" width="100%"/>
 		</s:VGroup>
-
+		
 		<mx:Canvas width="1" height="500" backgroundColor="0xdedede"/>
-
+		
 		<s:VGroup gap="5">			
 			<s:Label text="Result of Query" styleName="jkHeader"/>
 			<s:Label text="The result of evaluating the selected query against the raw data." styleName="jkNotes"/>
@@ -148,4 +147,4 @@
 		</s:VGroup>
 	</s:HGroup>
 	
-</s:Application>
+</mx:VBox>

@@ -2,6 +2,11 @@
 @namespace s "library://ns.adobe.com/flex/spark";
 @namespace mx "library://ns.adobe.com/flex/mx";
 
+mx|LinkBar {
+	color: #666666;	
+	disabledColor: #ff6600;	
+}
+
 @font-face {
 	src: url('../resources/DroidSerif-Regular.ttf');
 	fontFamily: Droid;
@@ -40,14 +45,19 @@
 
 global {
 	fontFamily: Droid;	
-	fontSize: 14;
+	fontSize: 13;
     color: #333333;
+}
+
+#helpDescription {
+	fontFamily: DroidNonCFF;
+	fontSize: 14;
 }
 
 .jkBody {
 	fontFamily: Droid;
 	fontWeight: normal;
-	fontSize: 14;
+	fontSize: 13;
 }
 
 .jkHeader {
@@ -59,7 +69,7 @@ global {
 .jkNotes {
 	fontFamily: Droid;
 	fontWeight: normal;
-	fontSize: 12;
+	fontSize: 11;
 	color: #888888;
 }
 
@@ -67,7 +77,7 @@ global {
 .jkNotesLink {
 	fontFamily: Droid;
 	fontWeight: normal;
-	fontSize: 12;
+	fontSize: 11;
 	color: #000099;
 	textDecoration: underline;
 }

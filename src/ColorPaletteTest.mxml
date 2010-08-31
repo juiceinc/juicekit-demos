@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark"  xmlns:controls="core.controls.*"
+			   xmlns:local="*"
+			   
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" xmlns:controls1="core.controls.*">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+		<fx:String id="helpText">
+			<![CDATA[
+			JuiceKit has a variety of built-in color palettes derived from Cynthia Brewer's work on ColorBrewer. 
+			
+			Palettes can be created of any length and can be manipulated in place with a variety of modification functions. You can bind to palette colors in Flex. <b>Click on any palette to see how to create it in JuiceKit.</b>
+			]]>
+		</fx:String>
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import core.controls.PaletteBlock;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.CollectionEvent;
+			import mx.events.ListEvent;
+			
+			import org.juicekit.palette.ColorPalette;
+			import org.juicekit.util.Colors;
+			import org.juicekit.util.Strings;
+			
+			[Bindable]
+			private var seqcolors:Array = [
+				'gray',
+				'bone',
+				'pink',
+				'copper',
+				'hot',
+				'cool',
+				'spring',
+				'summer',
+				'autumn',
+				'winter',
+				'gist_heat',
+				'gist_earth',
+				'gist_stern',
+				'gist_ncar',
+			];
+			
+			[Bindable]
+			private var revseqcolors:Array = [
+				'binary', 
+				'Greys',
+				//'gist_yarg', 
+				'Reds',
+				'OrRd',
+				'YlOrRd',
+				'Oranges',
+				'YlOrBr',
+				'PuRd',
+				'RdPu',
+				'BuPu',
+				'Purples',
+				'PuBu',
+				'Blues',
+				'YlGnBu',
+				'GnBu',
+				'PuBuGn',
+				'BuGn',
+				'Greens',
+				'YlGn',
+			];
+			
+			[Bindable]
+			private var divcolors:Array = [
+				'RdGy',
+				'BrBG',
+				'PiYG',
+				'PRGn',
+				'PuOr',
+				'RdBu',
+				'RdYlBu',
+				'RdYlGn',
+				'Spectral',
+				'jet',
+			];
+			
+			[Bindable]
+			private var catcolors:Array = [
+				'spectral',
+				'hsv',
+				'jet',
+				'gist_ncar',
+				'gist_rainbow',
+				'prism',
+				'Accent',
+				'Dark2',
+				'Paired',
+				'Set1',
+				'Set2',
+				'Set3',
+				'Pastel1',
+				'Pastel2',
+			];
+			
+			
+			[Bindable]
+			private var selectedPalette:org.juicekit.palette.ColorPalette = null;
+			
+			private var colorPalettes:Array = [];
+			private var paletteBlocks:Array = [];
+			private var transformations:Array = [];
+			
+			
+			private function init():void {
+				var i:int;
+				var pb:Object;
+				for each (var vbox:Object in[paletteBox, paletteBox2, paletteBox3, paletteBox4]) {
+					for (i = 0; i < vbox.numChildren; i++) {
+						pb = vbox.getChildAt(i);
+						if (pb is core.controls.PaletteBlock) {
+							colorPalettes.push(pb.colorPalette);
+							paletteBlocks.push(pb);
+						}
+					}
+				}
+				
+				for (i = 0; i < paletteBlocks.length; i++) {
+					paletteBlocks[i].addEventListener(MouseEvent.CLICK, function(e:Event):void {
+						paletteCode.text = Strings.format("ColorPalette.getPaletteByName('{0}', {1:0}){2};",
+							e.target.colorPalette.paletteName,
+							colorPaletteLength.value,
+							(transformations.length > 0 ? '.' : '') + transformations.join('.'));
+						paletteDisplay.colorPalette = e.currentTarget.colorPalette;
+					});
+				}
+			}
+			
+			private function modifyPalette(s:String):void {
+				for (var i:int = 0; i < colorPalettes.length; i++) {
+					var cp:ColorPalette = colorPalettes[i] as ColorPalette;
+					cp[s]();
+				}
+				// get rid of paired reverses        
+				if (s == 'reverse' && transformations.length > 0 && transformations[transformations.length-1] == 'reverse()') {
+					transformations.pop();
+				} else {
+					transformations.push(s + '()');          
+				}
+				
+				paletteCode.text = '';
+			}
+			
+			
+			private function reset():void {
+				for (var i:int = 0; i < paletteBlocks.length; i++) {
+					var pb:PaletteBlock = paletteBlocks[i] as core.controls.PaletteBlock;
+					pb.reset();
+				}
+				colorPaletteLength.value = 12;
+				transformations = [];
+				paletteCode.text = '';
+			}
+			
+			
+			private function setLength():void {
+				for (var i:int = 0; i < colorPalettes.length; i++) {
+					var cp:ColorPalette = colorPalettes[i] as ColorPalette;
+					cp.length = colorPaletteLength.value as int;
+				}
+				paletteCode.text = '';
+			}
+			
+			public var myAC:ArrayCollection;
+		]]>
+	</fx:Script>
+	
+	<mx:HBox horizontalAlign="left"
+			 fontFamily="Arial"
+			 width="100%"
+			 height="100%"
+			 horizontalScrollPolicy="off"
+			 verticalScrollPolicy="off"
+			 fontSize="12"
+			 verticalGap="0"
+			 initialize="init()">
+		
+		<mx:VBox height="100%" width="800" horizontalScrollPolicy="off" verticalScrollPolicy="off" verticalGap="2">
+			<mx:Text width="700" text="Built-in color palettes" styleName="title"/>
+			<mx:Text htmlText="Click on any palette to see how to create it in JuiceKit."/>
+			
+			<mx:HBox horizontalGap="20">
+				<mx:VBox id="paletteBox" verticalGap="1">
+					<mx:Label styleName="subTitle" text="Sequential (dark to bright)"/>
+					<mx:Repeater id="reptSeq" dataProvider="{seqcolors}">
+						<controls:PaletteBlock palette="{reptSeq.currentItem}"/>
+					</mx:Repeater>
+				</mx:VBox>
+				<mx:VBox id="paletteBox2" verticalGap="1">
+					<mx:Label styleName="subTitle" text="Sequential (bright to dark)"/>
+					<mx:Repeater id="reptSeq2" dataProvider="{revseqcolors}">
+						<controls:PaletteBlock palette="{reptSeq2.currentItem}"/>
+					</mx:Repeater>
+				</mx:VBox>
+				<mx:VBox id="paletteBox3" verticalGap="1">
+					<mx:Label styleName="subTitle" text="Diverging"/>
+					<mx:Repeater id="reptSeq3" dataProvider="{divcolors}">
+						<controls:PaletteBlock palette="{reptSeq3.currentItem}"/>
+					</mx:Repeater>
+				</mx:VBox>
+				<mx:VBox id="paletteBox4" verticalGap="1">
+					<mx:Label styleName="subTitle" text="Categorical"/>
+					<mx:Repeater id="reptSeq4" dataProvider="{catcolors}">
+						<controls:PaletteBlock palette="{reptSeq4.currentItem}"/>
+					</mx:Repeater>
+				</mx:VBox>
+			</mx:HBox>
+			
+			<mx:Spacer height="10"/>
+			<mx:HBox horizontalGap="2">
+				<mx:Label text="Change length (resets modifications):"/>
+				<mx:HSlider id="colorPaletteLength"
+							minimum="2"
+							maximum="50"
+							value="12"
+							snapInterval="1.0"
+							change="{setLength()}"/>
+			</mx:HBox>
+			<mx:HBox horizontalGap="2">
+				<mx:Label text="Modify:"/>
+				<mx:Button styleName="buttonStyle" label="darken()" click="modifyPalette('darken')"/>
+				<mx:Button styleName="buttonStyle" label="lighten()" click="modifyPalette('lighten')"/>
+				<mx:Spacer width="8"/>
+				<mx:Button styleName="buttonStyle" label="saturate()" click="modifyPalette('saturate')"/>
+				<mx:Button styleName="buttonStyle" label="desaturate()" click="modifyPalette('desaturate')"/>
+				<mx:Spacer width="8"/>
+				<mx:Button styleName="buttonStyle" label="analog()" click="modifyPalette('analog')"/>
+				<mx:Button styleName="buttonStyle" label="complement()" click="modifyPalette('complement')"/>
+				<mx:Button styleName="buttonStyle" label="reverse()" click="modifyPalette('reverse')"/>
+				<mx:Spacer width="8"/>
+				<mx:Button styleName="buttonStyle" label="reset" color="0x0000ff" click="reset()"/>
+			</mx:HBox>
+			<!--Sorts are not working reliably.--> 
+			<mx:HBox horizontalGap="2">
+				<mx:Label text="Sort:"/>
+				<mx:Button styleName="buttonStyle" label="sortByLuminance()" click="modifyPalette('sortByLuminance')"/>
+				<mx:Button styleName="buttonStyle" label="sortByHue()" click="modifyPalette('sortByHue')"/>
+				<mx:Button styleName="buttonStyle" label="sortBySaturation()" click="modifyPalette('sortBySaturation')"/>
+				<mx:Spacer width="8"/>
+			</mx:HBox>
+			<mx:Spacer height="10"/>
+			
+			<mx:Text id="paletteCode" width="700" text="" styleName="code"/>
+			<controls1:PaletteDisplayGroup visible="{paletteCode.text != ''}" id="paletteDisplay" width="100%" height="110"/>
+		</mx:VBox>
+		
+		<mx:Canvas width="1"
+				   height="100%"
+				   top="0"
+				   left="0"
+				   backgroundColor="0xcccccc">
+		</mx:Canvas>
+		
+		<mx:Canvas width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+			<mx:Text top="0"
+					 styleName="code"
+					 htmlText="{helpText}"
+					 left="0"
+					 height="100%"
+					 width="100%"/>
+		</mx:Canvas>
+		
+		
+	</mx:HBox>
+	
+</s:Application>

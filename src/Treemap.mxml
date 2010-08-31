@@ -26,12 +26,17 @@
 			import org.juicekit.util.Strings;
 			
 			private var d:Array;
-			[Bindable] private var levelOrder:Array = ['AGE', 'SEX', 'STATE'];
 			
+			[Bindable] private var levelOrder:ArrayCollection =  new ArrayCollection(['AGE', 'SEX', 'STATE']);
+			
+			
+			/**
+			 * Parse the CSV data loaded from the server.
+			 */
 			public function resultHandler(event:ResultEvent):void {
 				d = new DelimitedTextConverter(',').parse(event.result as String).nodes.data;
 				/*
-				The data looks like this:
+				The raw data looks like this:
 				
 				STATE,SEX,AGE,POP2000,POP2008
 				Alabama,M,0,30479,32055
@@ -42,23 +47,53 @@
 				Alabama,M,5,31127,31049
 				Alabama,M,6,31466,30960
 				*/
+				
+				// Group the ages into 10 year bands to reduce data size
+				for each (var o:Object in d) {
+					if (o.AGE < 10) {
+						o.AGE = '0-9';
+					} else if (o.AGE < 20) {
+						o.AGE = '10-19';
+					} else if (o.AGE < 30) {
+						o.AGE = '20-29';
+					} else if (o.AGE < 40) {
+						o.AGE = '30-39';
+					} else if (o.AGE < 50) {
+						o.AGE = '40-49';
+					} else if (o.AGE < 60) {
+						o.AGE = '50-59';
+					} else if (o.AGE < 70) {
+						o.AGE = '60-69';
+					} else if (o.AGE < 80) {
+						o.AGE = '70-79';
+					} else if (o.AGE < 90) {
+						o.AGE = '80+';
+					}
+				}
+				d = select('AGE', 'STATE', 'SEX', {POP2000: sum('POP2000')}, {POP2008: sum('POP2008')}).groupby('AGE', 'STATE', 'SEX').eval(d);
+
 				generateTreemapData();
 			}
 			
+			
+			/**
+			 * Generate a treemap using the data previously loading into the array d.
+			 */
 			public function generateTreemapData():void {
-				currentState = 'loading';
 				var t:Tree = GraphUtil.treeMap(d,                       // An array containing data 
-											   levelOrder.slice(0,2),   // The "levels" of the treemap"
+											   levelOrder.source,       // The "levels" of the treemap
 											   ['POP2000', 'POP2008',
-												   {change: pctchange('POP2008', 'POP2000')},
-												   {pctFemale: div(sum(iff(eq('SEX', _('F')),'POP2008',_(0))), sum('POP2008')) },
-												   {avgAge: wtdaverage('AGE', 'POP2008')}]); // The metrics
-				// Percentage change in population from 2000 to 2008.
-				// change = (POP2008 - POP2000) / POP2000
-				
+											   {change: pctchange('POP2008', 'POP2000')},
+											   ]); // The metrics
+	
+				// A few more metrics that can be added
+//				{pctFemale: div(sum(iff(eq('SEX', _('F')),'POP2008',_(0))), sum('POP2008')) },
+//				{avgAge: wtdaverage('AGE', 'POP2008')}
+	
 				treemap.data = t;
 				
 				
+				// Add tooltips on rollover
 				treemap.addEventListener(DataMouseEvent.MOUSE_OVER, function(e:DataMouseEvent):void {
 					if ((e.dataSprite as NodeSprite).childDegree == 0) {
 						selectedNode.htmlText = Strings.format("<b>State:</b> {0}<br/>" + 
@@ -74,12 +109,12 @@
 				treemap.addEventListener(DataMouseEvent.MOUSE_OUT, function(e:DataMouseEvent):void {
 					selectedNode.text = '';
 				});
-				
-				currentState = 'complete';
 			}
 			
+			/**
+			 * Handle reordering of the treemap levels.
+			 */
 			private function handleBtnReorder(event:DragEvent):void {
-				currentState = 'loading';
 				// delay briefly to allow the move animation to complete
 				setTimeout(function():void {
 					generateTreemapData()
@@ -97,80 +132,87 @@
 						resultFormat="text"/>
 	</fx:Declarations>
 	
+	<fx:Style source="style.css"/>
 	
-	<s:states>
-		<s:State name="loading"/>
-		<s:State name="complete"/>
-	</s:states>                
-	
-	<mx:VBox width="100%" height="100%">
-		<mx:HBox>
-			<mx:Label text="Population Growth by Age, Gender, and State" styleName="jkHeader" fontSize="18" fontWeight="bold" />
-		</mx:HBox>
-		<mx:Label text="This demo illustrates the features of the JuiceKit treemap. Source: US Census Bureau" styleName="jkBase"/>
+	<s:VGroup width="100%" height="100%" paddingLeft="20" paddingTop="20" paddingRight="20" paddingBottom="20">
+		<s:Label text="Population Growth by Age, Gender, and State" styleName="jkHeader"/>
+		<s:Label text="This demo illustrates the features of the JuiceKit treemap. Source: US Census Bureau" styleName="jkBase"/>
 		
-		<mx:HBox>
-			<mx:Label text="Group by:"/>
-			<mx:HorizontalList id="hl"
-							   dataProvider="{levelOrder}"
-							   dragComplete="handleBtnReorder(event)"
-							   dragMoveEnabled="true"
-							   dropEnabled="true"
-							   dragEnabled="true"
-							   width="220"
-							   useRollOver="false"
-							   selectionColor="#ffffff">
-				<mx:itemRenderer>
+		<s:HGroup verticalAlign="middle">
+			<s:Label text="Group by:"/>
+			<s:List id="hl"
+					dataProvider="{levelOrder}" 
+					dragComplete="handleBtnReorder(event)" 
+					dragMoveEnabled="true"
+				    dropEnabled="true"
+				    dragEnabled="true"
+				    width="220" borderVisible="false"
+				    selectionColor="#ffffff"
+					>
+				<s:layout>
+					<s:HorizontalLayout gap="2"/>
+				</s:layout>
+				<s:itemRenderer>
 					<fx:Component>
-						<mx:Button label="{data}" width="60" height="20"/>
+						<s:ItemRenderer>
+							<s:Button label="{data}" width="60" height="20"/>
+						</s:ItemRenderer>
 					</fx:Component>
-				</mx:itemRenderer>
-			</mx:HorizontalList>
-			<mx:Label text="Color by:"/>
-			<mx:ComboBox id="colorCmb" selectedIndex="0" dataProvider="['change', 'avgAge', 'pctFemale', 'POP2000', 'POP2008']"/>
-			<mx:Label text="Size by:"/>
-			<mx:ComboBox id="sizeCmb" selectedIndex="0" dataProvider="['POP2000', 'POP2008']"/>
-			<mx:Label text="Color palette:"/>
-			<mx:ComboBox id="paletteCmb"
+				</s:itemRenderer>
+			</s:List>
+			<s:Label text="Color by:"/>
+			<s:ComboBox id="colorCmb" selectedIndex="0" dataProvider="{new ArrayCollection(['change', 'POP2000', 'POP2008'])}"/>
+			<s:Label text="Size by:"/>
+			<s:ComboBox id="sizeCmb" selectedIndex="0" dataProvider="{new ArrayCollection(['POP2000', 'POP2008'])}"/>
+			<s:Label text="Color palette:"/>
+			<s:ComboBox id="paletteCmb"
 						 selectedIndex="0"
-						 dataProvider="['hot', 'summer', 'cool', 'Purples', 'YlGn', 'RdGy', 'PuOr']"
-						 itemRenderer="visualizations.renderer.PaletteRenderer"
-						 dropdownWidth="200"
-						 rowCount="8"/>
-		</mx:HBox>
+						 dataProvider="{new ArrayCollection(['RdGy','hot', 'summer', 'cool', 'Purples', 'YlGn', 'RdGy', 'PuOr'])}"
+						 />
+		</s:HGroup>
 		
+		<!--
+		This is the treemap itself.
 		
+		TreeMapZoomControl allows the treemap to zoom into and out
+		of selected subcategories.		
+		-->
 		<controls:TreeMapZoomControl tree="{treemap}" fontSize="16" color="#333333"/>
-		<mx:Canvas width="100%" height="100%">
-			<!-- 
-			this appears when the treemap is loading or regenerating
-			it's visibility is controlled by the 'loading' state       
-			-->
-			<mx:Label visible.complete="false" visible.loading="true" id="loadingLbl" text="Loading" color="#cccccc" fontSize="48"/>
-			
-			<!-- the treemap itself -->
-			<mx:HBox visible.complete="true" visible.loading="false" id="treemapHBox" width="100%" height="100%">
+		
+		<s:Group width="100%" height="100%">
+			<s:HGroup id="treemapHBox" width="100%" height="100%">
 				
+				<!-- 
+				The treemap itself.
+				
+				Currently the treemap can not use Flex 4 based fonts so fonts are set
+				explicitly.
+				
+				-->
+
 				<controls:TreeMapControl id="treemap"
 										 width="100%"
 										 height="100%" 
-										 fontFamily="Arial"
 										 transitionPeriod="1.2"
-										 palette="{paletteCmb.selectedItem}"
-										 colorEncodingField="{colorCmb.selectedItem}"
-										 sizeEncodingField="{sizeCmb.selectedItem}"
 										 styleFromDataRoot="true"
+
+										 fontFamily="Arial"
 										 fontSize="16"
 										 labelEncodingField="name"
 										 labelColorStrategy="glow"
 										 truncateToFit="true"
-										 strokeColors="[0xffffff, 0x000000, 0x000000, 0x333333]"
+
+										 palette="{paletteCmb.selectedItem}"
+										 colorEncodingField="{colorCmb.selectedItem}"
+										 sizeEncodingField="{sizeCmb.selectedItem}"
+
+										 strokeColors="[0xffffff, 0xffffff, 0xffffff, 0x333333]"
 										 strokeAlphas="[1,1,1,1]"
 										 strokeThicknesses="[0,4,2,0.25]"/>
 				
 				<mx:Text id="selectedNode" width="250"/>
-			</mx:HBox>
-		</mx:Canvas>
-	</mx:VBox>
+			</s:HGroup>
+		</s:Group>
+	</s:VGroup>
 	
 </s:Application>

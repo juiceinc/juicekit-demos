@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx" width="500" right="0" height="100%" minHeight="500" depth="1" creationComplete="group1_creationCompleteHandler(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.graphics.SolidColorStroke;
+			
+			import org.juicekit.animate.Transitioner;
+
+			/**
+			 * Text to help the user understand this demo
+			 */
+			[Bindable]
+			public var title:String = '';
+			
+
+			/**
+			 * Text to help the user understand this demo
+			 */
+			[Bindable]
+			public var helpText:String = '';
+			
+			/**
+			 * Code formatted text
+			 */
+			[Bindable]
+			public var helpCode:String = '';
+			
+			private function playHelpOpen(showHelp:Boolean):void {
+				var helpOpen:Boolean = showHelp;
+				var t:Transitioner = new Transitioner();
+				t.setValue(this, 'right', helpOpen ? 0 : -488);
+				t.setValue(line1, 'stroke.color', helpOpen ? 0x333333 : 0xffffff);
+				t.setValue(line2, 'stroke.color', helpOpen ? 0x333333 : 0xffffff);
+				t.setValue(line1, 'stroke.alpha', helpOpen ? 0.65 : 1);
+				t.setValue(line2, 'stroke.alpha', helpOpen ? 0.65 : 1);
+				t.setValue(helpContainer, 'backgroundColor', helpOpen ? 0xddddee : 0xff6600);
+				t.play(); 
+			}
+			
+
+			protected function group1_creationCompleteHandler(event:FlexEvent):void
+			{
+				playHelpOpen(false);
+			}
+
+		]]>
+	</fx:Script>
+	
+	<s:VGroup id="helpGroup">
+		<s:BorderContainer id="helpContainer"
+						   height="100%" 
+						   width="100%" 
+						   backgroundColor="0xddddee" 
+						   backgroundAlpha="0.95" 
+						   borderVisible="false">		
+			<s:VGroup paddingLeft="15" paddingTop="10" paddingRight="10" gap="10">
+				<s:HGroup verticalAlign="bottom">
+					<s:Label styleName="jkHeader" text="{title}"/>		
+					<s:Button id="clickToHide" styleName="jkNotes" color="0x666666" label="Click to hide" click="playHelpOpen(false)"/>		
+				</s:HGroup>
+				<s:Label width="480" text="{helpText}"/>
+				<s:Label width="480" text="{helpCode}" fontFamily="Monaco" fontSize="11"/>
+			</s:VGroup>
+			<s:Group top="0" width="12" left="0" height="100%" click="playHelpOpen(true)">
+				<s:Rect height="100%" width="100%">					
+					<s:fill>
+						<s:LinearGradient>
+							<s:GradientEntry color="0x333333" alpha="0.1"/>
+							<s:GradientEntry color="0x333333" alpha="0"/>
+						</s:LinearGradient>
+					</s:fill>
+				</s:Rect>
+			</s:Group>
+			
+			<s:Line id="line1" top="{helpContainer.height/2}" height="20" left="4" stroke="{new SolidColorStroke(0x333333, 0.65)}"/>
+			<s:Line id="line2" top="{helpContainer.height/2}" height="20" left="6" stroke="{new SolidColorStroke(0x333333, 0.65)}"/>
+		</s:BorderContainer>
+	</s:VGroup>	
+</s:Group>

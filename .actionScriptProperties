@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<actionScriptProperties analytics="false" mainApplicationPath="data/QueryExamples.mxml" projectUUID="8e62a60b-f186-4c5a-b448-dbd0457014d5" version="6">
+<actionScriptProperties analytics="false" mainApplicationPath="JuiceKitCoreDemos.mxml" projectUUID="8e62a60b-f186-4c5a-b448-dbd0457014d5" version="6">
   <compiler additionalCompilerArguments="-locale en_US" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="true" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
     <compilerSourcePath/>
     <libraryPath defaultLinkType="0">
@@ -17,19 +17,21 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="core/InactivityTest.mxml"/>
+    <application path="CoreFlowCanvas.mxml"/>
     <application path="encode/EncoderDemo.mxml"/>
-    <application path="visualizations/Treemap.mxml"/>
-    <application path="core/BrowserResizerTest.mxml"/>
+    <application path="CoreFormattingStrings.mxml"/>
+    <application path="CoreAnimationTransitioner.mxml"/>
+    <application path="CoreAnimationUsingTweens.mxml"/>
+    <application path="CoreInactivityMonitor.mxml"/>
+    <application path="CoreColors.mxml"/>
     <application path="encode/EncodedArrayCollection.mxml"/>
-    <application path="core/InactivityMXMLTest.mxml"/>
-    <application path="core/AnimationAndContainers.mxml"/>
-    <application path="core/AnimationTest.mxml"/>
-    <application path="core/FormattingStrings.mxml"/>
-    <application path="data/DataParse.mxml"/>
-    <application path="core/FilteringAndSorting.mxml"/>
-    <application path="data/QueryExamples.mxml"/>
-    <application path="data/SortPerformance.mxml"/>
+    <application path="ColorPaletteTest.mxml"/>
+    <application path="Treemap.mxml"/>
+    <application path="CoreStagedAnimation.mxml"/>
+    <application path="util/DemoApplication.as"/>
+    <application path="CoreBrowserCanvas.mxml"/>
+    <application path="JuiceKitDataDemos.mxml"/>
+    <application path="CoreSortingAndFiltering.mxml"/>
   </applications>
   <modules/>
   <buildCSSFiles/>

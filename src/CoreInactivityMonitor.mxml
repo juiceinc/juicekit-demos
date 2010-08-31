@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<util:DemoApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  
+                      xmlns:s="library://ns.adobe.com/flex/spark" 
+                      xmlns:mx="library://ns.adobe.com/flex/mx" 
+                      xmlns:local="*" 
+                      xmlns:containers="org.juicekit.containers.*" 
+                      creationComplete="creationCompleteHandler(event)" 
+                      xmlns:util="util.*">
+    
+    
+    <!---
+    
+    An InactivityMonitor can be attached to a component. It dispatches an Event when a 
+    certain amount of time has elapsed without a specified event occuring.
+    
+    -->
+    <fx:Declarations>
+        <fx:String id="helpText">
+            <![CDATA[
+An InactivityMonitor can be attached to a component. It dispatches an Event when a certain amount of time has elapsed without a specified event occuring.
+            ]]>
+        </fx:String>
+        
+        <fx:String id="helpCode">
+            <![CDATA[
+monitor = new InactivityMonitor(watchme);
+// Set custom inactivity events
+monitor.setMonitoredEvents([MouseEvent.MOUSE_DOWN, MouseEvent.MOUSE_MOVE]);
+monitor.addEventListener(InactivityEvent.JK_INACTIVITY_PERIOD, function(e:Event):void {
+watchme.setStyle('backgroundColor', 'blue');
+            });
+            ]]>
+        </fx:String>
+    </fx:Declarations>    
+    
+
+    <fx:Style source="style.css"/>
+    
+
+    <fx:Script>
+    <![CDATA[
+        import mx.controls.Alert;
+        import mx.events.FlexEvent;
+        
+        import org.juicekit.events.InactivityEvent;
+        import org.juicekit.events.InactivityMonitor;
+        
+        protected var monitor:InactivityMonitor;
+        
+        protected function creationCompleteHandler(event:FlexEvent):void
+        {
+            monitor = new InactivityMonitor(watchme);
+            // Set custom inactivity events
+            monitor.setMonitoredEvents([MouseEvent.MOUSE_DOWN, MouseEvent.MOUSE_MOVE]);
+            monitor.addEventListener(InactivityEvent.JK_INACTIVITY_PERIOD, function(e:Event):void {
+                watchme.setStyle('backgroundColor', 'blue');
+            });
+        }
+        
+        
+    ]]>
+    </fx:Script>
+    
+    <s:VGroup paddingTop="20" paddingLeft="20">
+        <s:Label text="Inactivity Monitoring" styleName="jkHeader"/>
+        <s:Label text="This box will turn blue after 5 seconds of inactivity. Click or mouse on it to prevent it from becoming inactive." width="470" styleName="jkBase"/>
+        <s:SkinnableContainer id="watchme" width="100" height="100"  backgroundColor="red" click="watchme.setStyle('backgroundColor', 'red')">
+            <s:Label text="Click to reset" color="white" fontSize="14" paddingTop="10" paddingLeft="5"/>
+        </s:SkinnableContainer>
+    </s:VGroup>
+        
+</util:DemoApplication>

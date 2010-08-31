@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<util:DemoApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  
+                      xmlns:s="library://ns.adobe.com/flex/spark" 
+                      xmlns:mx="library://ns.adobe.com/flex/mx" 
+                      xmlns:local="*" 
+                      xmlns:containers="org.juicekit.containers.*" 
+                      xmlns:util="util.*" 
+                      xmlns:util1="org.juicekit.util.*">
+    
+    
+    <!---
+    
+    Demonstrates the Sort.sortArrayCollectionBy utility function.
+    
+    -->
+    
+    <fx:Declarations>
+        <fx:String id="helpText">
+            <![CDATA[
+The Sort utility class has functions to support flexible sorting.
+
+All of the Sort utility functions allow you to supply an Array of Strings.	The Array contains property names that you want to sort by. Add a "-" to the start of the property name and the sort will be in descending order. Use a "#" as the first character to sort in natural sort order.
+            ]]>
+        </fx:String>
+        
+        <fx:String id="helpCode">
+            <![CDATA[			
+{property name} sort by this property name
+-{property name} sort in descending order
+#{property name} natural sort
+
+The raw data looks like this:
+
+[Bindable]
+public var ac:ArrayCollection = new ArrayCollection([
+    { name: 'Chris', val: 1, anum: 'File1' },
+    { name: 'Zach', val: 2, anum: 'File101' },
+    { name: 'David', val: 2, anum: 'File123' },
+    { name: 'Djamshed', val: 3, anum: 'File12' },
+    new TestModel('Meghna', 20, 'File99' ),
+    new TestModel('Shalini', 4, 'File3' ),
+    new TestModel('Jon', 20, 'File 1' ),
+    new TestModel('Adrian', 2, 'File5' ),
+]);
+            
+Each button calls:
+            
+Sort.sortArrayCollectionBy(ac, {button params});
+            ]]>
+        </fx:String>
+    </fx:Declarations>
+    
+    
+    <fx:Style source="style.css"/>
+    
+    
+    <fx:Script>
+    <![CDATA[
+        import mx.collections.ArrayCollection;
+        import mx.collections.SortField;
+        
+        import org.juicekit.util.Filter;
+        import org.juicekit.util.Sort;
+        
+        import core.util.TestModel;
+        
+        /**
+         * Sample data
+         */
+        [Bindable]
+        public var ac:ArrayCollection = new ArrayCollection([
+            { name: 'Chris', val: 1, anum: 'File1' },
+            { name: 'Zach', val: 2, anum: 'File101' },
+            { name: 'David', val: 2, anum: 'File123' },
+            { name: 'Djamshed', val: 3, anum: 'File12' },
+            new TestModel('Meghna', 20, 'File99' ),
+            new TestModel('Shalini', 4, 'File3' ),
+            new TestModel('Jon', 20, 'File 1' ),
+            new TestModel('Adrian', 2, 'File5' ),
+        ]);
+        
+        
+        /**
+         * Use the Filter.$ constructor to select only rows
+         * that are instances of <code>TestModel</code>.
+         */
+        protected function checkTestModel(event:Event):void
+        {
+            ac.filterFunction = Filter.$(TestModel);
+            ac.refresh();
+        }
+        
+        /**
+         * Sort by params
+         */
+        protected function sortAC(params:Array=null):void
+        {
+            Sort.sortArrayCollectionBy(ac, params);
+        }
+        
+    ]]>
+    </fx:Script>
+    
+    
+    <s:VGroup paddingTop="20" paddingLeft="20">
+        <s:Label text="Filtering and sorting" styleName="jkHeader"/>
+        <s:Label text="This illustrates filtering and sorting convenience methods" styleName="jkBase"/>
+        <s:Button click="checkTestModel(event)" label="Filtering: TestModel instances only" styleName="jkBase"/>
+        <s:Button click="sortAC(['-val', '-name'])" label="['-val', '-name']: Sort by descending val, then by descending name" styleName="jkBase"/>
+        <s:Button click="sortAC(['val', '-name'])" label="['val', '-name']: Sort by val, then descending by name" styleName="jkBase"/>
+        <s:Button click="sortAC(['anum'])" label="['anum']: Conventional sort on anum field" styleName="jkBase"/>
+        <s:Button click="sortAC(['#anum'])" label="['#anum']: Alphanumeric sort on anum field" styleName="jkBase"/>
+        <s:Button click="sortAC(['-#anum'])" label="['-#anum']: Descending alphanumeric sort" styleName="jkBase"/>
+        <s:Button click="sortAC(['val', '#anum'])" label="['val', '#anum']: Sort by multiple fields including alphanumeric sort" styleName="jkBase"/>
+        <mx:Spacer height="20"/>
+        <mx:DataGrid dataProvider="{ac}" fontFamily="Arial" rowCount="8"/>
+    </s:VGroup>
+    
+</util:DemoApplication>

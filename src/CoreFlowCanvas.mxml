@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<util:DemoApplication xmlns:fx="http://ns.adobe.com/mxml/2009"  
+                      xmlns:s="library://ns.adobe.com/flex/spark" 
+                      xmlns:mx="library://ns.adobe.com/flex/mx" 
+                      xmlns:local="*" 
+                      xmlns:containers="org.juicekit.containers.*" 
+                      xmlns:util="util.*">
+    
+    
+    <!---
+    
+    This demonstrates how to use FlowCanvas.
+    Tween takes an object containing new property values that you would like to apply to an object.
+    
+    -->
+    
+    <fx:Declarations>
+        <fx:String id="helpText">
+            <![CDATA[
+This demo illustrates how to use FlowCanvas. FlowCanvas is a visual container that draws a curved, filled shape. The width of the curves is controlled with fromAmount and toAmount which control what percentage of the height or width is filled by the curve.
+            ]]>
+        </fx:String>
+    </fx:Declarations>
+    
+    
+    <fx:Script>
+    <![CDATA[
+        import org.juicekit.util.Colors;
+    ]]>
+    </fx:Script>
+    
+    <fx:Style source="style.css"/>
+
+    
+    <s:VGroup paddingLeft="20" paddingTop="20">
+        <s:Label text="Using FlowCanvas to connect containers" styleName="jkHeader"/>
+        <s:Label
+            text="A FlowCanvas can be used to seamlessly connect containers. Change the sliders to change properties of the flow canvases. "
+            width="480" styleName="jkBase"/>
+        <s:HGroup>
+            <s:Label styleName="jkNotes" text="Color" width="100" textAlign="right"/>            
+            <s:HSlider id="hueSlider" minimum="0" maximum="1" snapInterval="0.01"/>
+        </s:HGroup>
+        <s:HGroup>
+            <s:Label styleName="jkNotes" text="Alpha" width="100" textAlign="right"/>
+            <s:HSlider id="alphaSlider" value="0.9" minimum="0" maximum="1" snapInterval="0.01"/>
+        </s:HGroup>
+        <s:HGroup>
+            <s:Label styleName="jkNotes" text="Flow Width" width="100" textAlign="right"/>            
+            <s:HSlider id="widthSlider" value="50" minimum="10" maximum="100" snapInterval="1"/>
+        </s:HGroup>
+
+        <s:HGroup gap="1" verticalAlign="middle">
+            <s:BorderContainer id="bc1" height="{100+100*Math.random()}" width="100" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.75, 1.0)}"/>
+            <containers:FlowCanvas id="flow1" 
+                                   height="{Math.max(bc1.height, bc2.height)}" 
+                                   width="{widthSlider.value}" 
+                                   alpha="{alphaSlider.value}"
+                                   fromColor="{bc1.getStyle('backgroundColor')}"
+                                   toColor="{bc2.getStyle('backgroundColor')}" 
+                                   fromAmount="{bc1.height/Math.max(bc1.height, bc2.height)}"  
+                                   toAmount="{bc2.height/Math.max(bc1.height, bc2.height)}"/>
+            <s:BorderContainer id="bc2" height="{20+50*Math.random()}" width="100" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.5, 0.75)}"/>
+            <containers:FlowCanvas id="flow2" 
+                                   height="{Math.max(bc2.height, bc3.height)}" 
+                                   width="{widthSlider.value}" 
+                                   alpha="{alphaSlider.value}"
+                                   fromColor="{bc2.getStyle('backgroundColor')}"
+                                   toColor="{bc3.getStyle('backgroundColor')}" 
+                                   fromAmount="{bc2.height/Math.max(bc2.height, bc3.height)}"  
+                                   toAmount="{bc3.height/Math.max(bc2.height, bc3.height)}"/>
+            <s:BorderContainer id="bc3" height="{100+100*Math.random()}" width="100" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.8, 0.7)}"/>
+            <containers:FlowCanvas id="flow3" 
+                                   height="{Math.max(bc3.height, bc4.height)}" 
+                                   width="{widthSlider.value}" 
+                                   alpha="{alphaSlider.value}"
+                                   fromColor="{bc3.getStyle('backgroundColor')}"
+                                   toColor="{bc4.getStyle('backgroundColor')}" 
+                                   fromAmount="{bc3.height/Math.max(bc3.height, bc4.height)}"  
+                                   toAmount="{bc4.height/Math.max(bc3.height, bc4.height)}"/>
+            <s:BorderContainer id="bc4" height="{100+100*Math.random()}" width="100" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.7, 0.6)}"/>
+        </s:HGroup>
+
+        <!--
+        This is a vertical stack.
+        -->
+        <s:VGroup gap="1" horizontalAlign="center">
+            <s:BorderContainer id="vbc1" width="{100+100*Math.random()}" height="50" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.8, 0.7)}"/>
+            <containers:FlowCanvas id="vflow1" 
+                                   direction="vertical"
+                                   width="{Math.max(vbc1.width, vbc2.width)}" 
+                                   height="{widthSlider.value}" 
+                                   alpha="{alphaSlider.value}"
+                                   fromColor="{vbc1.getStyle('backgroundColor')}"
+                                   toColor="{vbc2.getStyle('backgroundColor')}" 
+                                   fromAmount="{vbc1.width/Math.max(vbc1.width, vbc2.width)}"  
+                                   toAmount="{vbc2.width/Math.max(vbc1.width, vbc2.width)}"/>
+            <s:BorderContainer id="vbc2" width="{20+50*Math.random()}" height="50" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.75, 0.5)}"/>
+            <containers:FlowCanvas id="vflow2" 
+                                   direction="vertical"
+                                   width="{Math.max(vbc2.width, vbc3.width)}" 
+                                   height="{widthSlider.value}" 
+                                   alpha="{alphaSlider.value}"
+                                   fromColor="{vbc2.getStyle('backgroundColor')}"
+                                   toColor="{vbc3.getStyle('backgroundColor')}" 
+                                   fromAmount="{vbc2.width/Math.max(vbc2.width, vbc3.width)}"  
+                                   toAmount="{vbc3.width/Math.max(vbc2.width, vbc3.width)}"/>
+            <s:BorderContainer id="vbc3" width="{100+100*Math.random()}" height="50" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.75, 1.0)}"/>
+            <containers:FlowCanvas id="vflow3" 
+                                   direction="vertical"
+                                   width="{Math.max(vbc3.width, vbc4.width)}" 
+                                   height="{widthSlider.value}" 
+                                   alpha="{alphaSlider.value}"
+                                   fromColor="{vbc3.getStyle('backgroundColor')}"
+                                   toColor="{vbc4.getStyle('backgroundColor')}" 
+                                   fromAmount="{vbc3.width/Math.max(vbc3.width, vbc4.width)}"  
+                                   toAmount="{vbc4.width/Math.max(vbc3.width, vbc4.width)}"/>
+            <s:BorderContainer id="vbc4" width="{100+100*Math.random()}" height="50" borderVisible="false" backgroundColor="{Colors.hsv(hueSlider.value, 0.7, 0.9)}"/>
+        </s:VGroup>
+    
+    </s:VGroup>    
+    
+    
+</util:DemoApplication>
